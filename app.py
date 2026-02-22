@@ -2,15 +2,11 @@ import os
 import torch
 import streamlit as st
 
-# -------------------------------------------------
 # 1. IMMEDIATE FIX FOR PYTHON 3.13 & STREAMLIT
-# -------------------------------------------------
 torch.classes.__path__ = []
 os.environ["STREAMLIT_SERVER_ENABLE_FILE_WATCHER"] = "false"
 
-# -------------------------------------------------
 # 2. LOCAL IMPORTS
-# -------------------------------------------------
 from tokenizer.vocab_builder import build_vocab
 from tokenizer.thunder_tok import ThunderTok
 from utils.fertility import fertility
@@ -18,9 +14,7 @@ from utils.fertility import fertility
 # CORRECT IMPORT BASED ON YOUR FOLDER NAME
 from llm.llama_wrapper import LLaMAWrapper
 
-# -------------------------------------------------
 # 3. STREAMLIT MODEL CACHE
-# -------------------------------------------------
 @st.cache_resource
 def load_tiny_llama(vocab_size):
     return LLaMAWrapper(
@@ -29,9 +23,7 @@ def load_tiny_llama(vocab_size):
         token=None
     )
 
-# -------------------------------------------------
 # 4. STREAMLIT UI
-# -------------------------------------------------
 st.set_page_config(page_title="Thunder-Tok + TinyLlama", layout="wide")
 st.title("⚡ Thunder-Tok integrated with TinyLlama")
 
@@ -52,9 +44,7 @@ if st.button("Run Thunder-Tok + LLaMA"):
         st.error(f"File not found: {corpus_path}")
         st.stop()
 
-    # -------------------------------------------------
     # 5. BUILD VOCAB & TOKENIZE
-    # -------------------------------------------------
     corpus = open(corpus_path, encoding="utf-8").read().splitlines()
     vocab, probs = build_vocab(corpus, vocab_size=2000)
 
@@ -64,16 +54,12 @@ if st.button("Run Thunder-Tok + LLaMA"):
     stoi = {t: i for i, t in enumerate(vocab)}
     input_ids = torch.tensor([[stoi.get(t, 0) for t in tokens]])
 
-    # -------------------------------------------------
     # 6. MODEL GENERATION
-    # -------------------------------------------------
     with st.spinner("Loading model & generating output..."):
         llama = load_tiny_llama(len(vocab))
         output_ids = llama.generate(input_ids)
 
-    # -------------------------------------------------
     # 7. SAFE DECODING (NO ERRORS)
-    # -------------------------------------------------
     output_ids_list = output_ids.tolist()[0]  # extract batch
 
     decoded_tokens = [
@@ -83,9 +69,7 @@ if st.button("Run Thunder-Tok + LLaMA"):
 
     output_text = "".join(decoded_tokens).strip()
 
-    # -------------------------------------------------
     # 8. DISPLAY RESULTS
-    # -------------------------------------------------
     col1, col2 = st.columns(2)
 
     with col1:
