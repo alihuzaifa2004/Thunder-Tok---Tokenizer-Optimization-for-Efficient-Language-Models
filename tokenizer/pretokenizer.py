@@ -1,6 +1,7 @@
 import regex as re
 
-# Unicode-aware linguistic pre-tokenizer
+# Unicode-aware linguistic pre-tokenizer#
+# regular expression
 PATTERN = re.compile(r"(?:\p{L}+|\p{N}+|[^\s])")
 
 def pretokenize(text: str):
